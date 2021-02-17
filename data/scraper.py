@@ -110,7 +110,6 @@ class Scraper:
         action_result = {}
 
         action = old_actions[action_num]
-        print("Action is ", repr(action))
         action_result["action"] = action
 
         links = self.get_links()
@@ -124,7 +123,6 @@ class Scraper:
             return None
 
         self.texts.add(result)
-        print(len(self.texts))
 
         action_result["result"] = result
 
@@ -144,15 +142,13 @@ class Scraper:
         scraper.go_to_url(url)
         text = scraper.get_text()
         actions = self.get_actions()
-        story_dict = {"tree_id": url, "context": "", "first_story_block": text, "action_results": []}
+        story_dict = {"tree_id": url.split('=')[-1], "first_story_block": text, "action_results": []}
 
         for i, action in enumerate(actions):
             if action not in self.end_actions:
                 action_result = self.build_tree_helper(text, i, 0, actions)
                 if action_result is not None:
                     story_dict["action_results"].append(action_result)
-            else:
-                print("done")
 
         return story_dict
 
@@ -170,7 +166,7 @@ urls = [
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10638",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11246",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=54639",
-    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7397",
+    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7397",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8041",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11545",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7393",
@@ -263,8 +259,8 @@ urls = [
 ]
 
 for u in range(len(urls)):
-    print("****** Extracting Adventure ", urls[u], " ***********")
+    print("** Extracting Adventure", urls[u].split('=')[-1], "**")
     curr_tree = scraper.build_story_tree(urls[u])
-    save_tree(curr_tree, "stories/story" + str(urls[u].split('=')[-1]) + ".json")
+    save_tree(curr_tree, "static/stories/" + str(urls[u].split('=')[-1]) + ".json")
 
-print("done")
+print("Done")
