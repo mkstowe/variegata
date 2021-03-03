@@ -82,6 +82,10 @@ class Scraper:
         }
         self.texts = set()
 
+        self.curr_story = ''
+        self.event_num = 0
+        self.action_num = 0
+
     def go_to_url(self, url):
         self.texts = set()
         self.driver.get(url)
@@ -105,7 +109,7 @@ class Scraper:
     def num_actions(self):
         return len(self.get_links()) - 4
 
-    def build_tree_helper(self, parent_story, action_num, depth, old_actions):
+    def build_tree_helper(self, parent_story, action_num, depth, prev_event, old_actions):
         depth += 1
         action_result = {}
 
@@ -129,11 +133,18 @@ class Scraper:
         actions = self.get_actions()
         action_result["action_results"] = []
 
+        action_num = 0
         for i, action in enumerate(actions):
             if actions[i] not in self.end_actions:
-                sub_action_result = self.build_tree_helper(result, i, depth, actions)
+                action_num += 1
+                sub_action_result = self.build_tree_helper(result, i, depth, self.event_num, actions)
                 if action_result is not None:
                     action_result["action_results"].append(sub_action_result)
+
+        with open('events.csv', 'a') as f:
+            f.write(self.curr_story + ',' + str(self.event_num) + ',' + str(prev_event) + ',' + str(action_num) +
+                    ',' + result.replace('\n', ' ') + '\n')
+        self.event_num += 1
 
         self.go_back()
         return action_result
@@ -141,14 +152,21 @@ class Scraper:
     def build_story_tree(self, url):
         scraper.go_to_url(url)
         text = scraper.get_text()
+
         actions = self.get_actions()
         story_dict = {"tree_id": url.split('=')[-1], "first_story_block": text, "action_results": []}
 
+        action_num = 0
         for i, action in enumerate(actions):
             if action not in self.end_actions:
-                action_result = self.build_tree_helper(text, i, 0, actions)
-                if action_result is not None:
-                    story_dict["action_results"].append(action_result)
+                action_num += 1
+                # action_result = self.build_tree_helper(text, i, 0, self.event_num, actions)
+                # if action_result is not None:
+                #     story_dict["action_results"].append(action_result)
+
+        with open('events.csv', 'a') as f:
+            f.write(self.curr_story + ',0,-1,-1' + str(action_num) + ',' + text.replace('\n', ' ') + '\n')
+        self.event_num += 1
 
         return story_dict
 
@@ -162,7 +180,7 @@ def save_tree(tree, filename):
 scraper = Scraper()
 
 urls = [
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=5587",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=5587",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10638",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11246",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=54639",
@@ -258,7 +276,13 @@ urls = [
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60772",
 ]
 
+with open('events.csv', 'w+') as file:
+    file.write("story_id, event_id, prev_event, prev_action, num_actions, text\n")
+
 for u in range(len(urls)):
+    scraper.curr_story = urls[u].split('=')[-1]
+    scraper.event_num = 0
+    scraper.action_num = 0
     print("** Extracting Adventure", urls[u].split('=')[-1], "**")
     curr_tree = scraper.build_story_tree(urls[u])
     save_tree(curr_tree, "static/stories/" + str(urls[u].split('=')[-1]) + ".json")
