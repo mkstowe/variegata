@@ -168,22 +168,122 @@ scraper = Scraper()
 
 urls = [
     "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=5587",
+    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10638",
+    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11246",
+    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=54639",
+    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7397",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8041",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11545",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7393",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=13875",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=37696",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31013",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45375",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=41698",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10634",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=42204",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=6823",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=18988",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10359",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=5466",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=28030",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56515",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7480",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11274",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53134",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=17306",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=470",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8041",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=23928",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10183",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45866",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60232",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=6376",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=36791",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60128",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=52961",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=54011",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=34838",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=13349",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8038",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56742",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=48393",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53356",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10872",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7393",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31013",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43910",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53837",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8098",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=55043",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=28838",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11906",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8040",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=2280",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31014",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43744",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=44543",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56753",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=36594",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=15424",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8035",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10524",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=14899",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=9361",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=28030",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=49642",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43573",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=38025",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7480",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7567",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60747",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10359",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31353",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=13875",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56501",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=38542",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=42204",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43993",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=1153",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=24743",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=57114",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=52887",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=21879",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=16489",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53186",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=34849",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=26752",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7094",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8557",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45225",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=4720",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=51926",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45375",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=27234",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60772",
 ]
 
+if os.path.exists("static/events.csv"):
+    os.remove("static/events.csv")
+else:
+    print("events.csv does not exist")
+
 for u in range(len(urls)):
+    scraper = Scraper()
     print("** Extracting Adventure", urls[u].split('=')[-1], "**")
     curr_tree = scraper.build_story_tree(urls[u])
     save_tree(curr_tree, "static/stories/" + str(urls[u].split('=')[-1]) + ".json")
 
-plt.figure(figsize=(20, 14))
+    nx.write_gml(scraper.G, "static/graphs/" + str(urls[u].split('=')[-1]) + ".gml")
 
+    with open('static/events.csv', 'a+') as file:
+        for event in scraper.events:
+            file.write(event.replace('\n', ' ') + '\n')
 
-nx.draw(scraper.G, node_size=1200, node_color='lightblue', linewidths=0.4, font_size=15, with_labels=True,
-        font_weight='bold')
-plt.savefig("story_graph.png")
-
-with open('events.csv', 'w+') as file:
-    for event in scraper.events:
-        file.write(event.replace('\n', ' ') + '\n')
+# plt.figure(figsize=(20, 14))
+#
+# nx.draw(scraper.G, node_size=1200, node_color='lightblue', linewidths=0.4, font_size=15, with_labels=True,
+#         font_weight='bold')
+# plt.savefig("story_graph.png")
 
 print("Done")
