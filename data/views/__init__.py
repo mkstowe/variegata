@@ -1,3 +1,3 @@
-"""Views, one for each Insta485 page."""
+"""Views."""
 from data.views.stories import stories
 from data.views.story import story
