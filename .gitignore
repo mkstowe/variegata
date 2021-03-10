@@ -2,3 +2,4 @@ graphs/
 stories/
 events.csv
 *.png
+*.model

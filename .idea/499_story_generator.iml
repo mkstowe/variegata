@@ -10,8 +10,7 @@
   <component name="TemplatesService">
     <option name="TEMPLATE_FOLDERS">
       <list>
-        <option value="$MODULE_DIR$/data/templates" />
-        <option value="$MODULE_DIR$/model/templates" />
+        <option value="$MODULE_DIR$/variegata/templates" />
       </list>
     </option>
   </component>

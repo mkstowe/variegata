@@ -2,8 +2,7 @@ import json
 import os
 import time
 import networkx as nx
-import matplotlib.pyplot as plt
-import data
+# import matplotlib.pyplot as plt
 
 from selenium import webdriver
 from selenium.webdriver import FirefoxOptions
@@ -100,13 +99,13 @@ class Scraper:
         return len(self.get_links()) - 4
 
     def build_story_tree(self, url):
-        scraper.go_to_url(url)
-        text = scraper.get_text()
+        self.go_to_url(url)
+        text = self.get_text()
 
         actions = self.get_actions()
 
         self.events.append(text)
-        self.G.add_node(str(story_num) + "_" + str(self.event_num), text=text)
+        self.G.add_node(str(self.curr_story) + "_" + str(self.event_num), text=text)
 
         story_dict = {"tree_id": url.split('=')[-1], "first_story_block": text, "action_results": []}
         for i, action in enumerate(actions):
@@ -134,13 +133,13 @@ class Scraper:
         if result == parent_story or result in self.texts:
             self.go_back()
             self.event_num = self.events.index(result)
-            self.G.add_edge(str(story_num) + "_" + str(prev_event), str(story_num) + "_" + str(self.event_num))
+            self.G.add_edge(str(self.curr_story) + "_" + str(prev_event), str(self.curr_story) + "_" + str(self.event_num))
             return None
 
         self.events.append(result)
         self.event_num = len(self.events) - 1
-        self.G.add_node(str(story_num) + "_" + str(self.event_num), text=result)
-        self.G.add_edge(str(story_num) + "_" + str(prev_event), str(story_num) + "_" + str(self.event_num))
+        self.G.add_node(str(self.curr_story) + "_" + str(self.event_num), text=result)
+        self.G.add_edge(str(self.curr_story) + "_" + str(prev_event), str(self.curr_story) + "_" + str(self.event_num))
 
         self.texts.add(result)
 
@@ -160,11 +159,9 @@ class Scraper:
 
 
 def save_tree(tree, filename):
-    with open(os.path.join(data.app.config["STORIES_DIR"], filename), "w+") as fp:
+    with open(os.path.join('static/stories', filename), "w+") as fp:
         json.dump(tree, fp)
 
-
-scraper = Scraper()
 
 urls = [
     "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=5587",
@@ -245,10 +242,8 @@ urls = [
     "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=42204",
     "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43993",
     "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=1153",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=24743",
     "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=57114",
     "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=52887",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=21879",
     "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=16489",
     "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53186",
     "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=34849",
@@ -263,28 +258,31 @@ urls = [
     "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60772",
 ]
 
-if os.path.exists(data.app.config["EVENTS_LIST"]):
-    os.remove(data.app.config["EVENTS_LIST"])
-else:
-    print("events.csv does not exist")
 
-for u in range(len(urls)):
-    scraper = Scraper()
-    story_num = urls[u].split('=')[-1]
-    print("** Extracting Adventure", story_num, "**")
-    curr_tree = scraper.build_story_tree(urls[u])
-    save_tree(curr_tree, str(story_num) + ".json")
+def scrape_stories():
+    with open('static/events.csv', 'w+') as file:
+        file.write("story,event_idx,text")
 
-    nx.write_adjlist(scraper.G, str(data.app.config["GRAPHS_DIR"]) + '/' + str(story_num) + ".gml")
+    for u in range(len(urls)):
+        scraper = Scraper()
+        scraper.curr_story = urls[u].split('=')[-1]
+        print("** Extracting Adventure", scraper.curr_story, "**")
+        curr_tree = scraper.build_story_tree(urls[u])
+        save_tree(curr_tree, str(scraper.curr_story) + ".json")
 
-    with open(data.app.config["EVENTS_LIST"], 'a+') as file:
-        for idx, event in enumerate(scraper.events):
-            file.write(str(story_num) + ',' + str(idx) + ',' + event.replace('\n', ' ') + '\n')
+        nx.write_adjlist(scraper.G, 'static/graphs/' + str(scraper.curr_story) + ".gml")
 
-# plt.figure(figsize=(20, 14))
-#
-# nx.draw(scraper.G, node_size=1200, node_color='lightblue', linewidths=0.4, font_size=15, with_labels=True,
-#         font_weight='bold')
-# plt.savefig("story_graph.png")
+        with open('static/events.csv', 'a+') as file:
+            for idx, event in enumerate(scraper.events):
+                file.write(str(scraper.curr_story) + ',' + str(idx) + ',"' + event.replace('\n', ' ') + '"' + '\n')
 
-print("Done")
+    # plt.figure(figsize=(20, 14))
+    #
+    # nx.draw(scraper.G, node_size=1200, node_color='lightblue', linewidths=0.4, font_size=15, with_labels=True,
+    #         font_weight='bold')
+    # plt.savefig("story_graph.png")
+
+    print("Done")
+
+
+# scrape_stories()

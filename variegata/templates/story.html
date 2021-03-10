@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Story</title>
+</head>
+<body>
+<form action="/story" method="GET">
+  <input type="submit" value="Generate New Story"/>
+</form>
+
+{% for event in events %}
+<p>{{ event }}</p>
+{% endfor %}
+</body>
+</html>
