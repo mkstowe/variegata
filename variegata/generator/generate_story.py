@@ -1,47 +1,31 @@
 import pathlib
 import os
 import random
-from gensim.models import Word2Vec
 import variegata
 from variegata.model import create_model
 import csv
 
 
-def events_to_dict():
-    if not os.path.exists(pathlib.Path(__file__).resolve().parent.parent/'static'/'events.csv'):
-        print("events.csv does not exist")
-        return
-
-    event_dict = {}
-    with open(pathlib.Path(__file__).resolve().parent.parent/'static'/'events.csv') as file:
-        for line in csv.DictReader(file, fieldnames=["story", "event_idx", "text"], quotechar='"', delimiter=',',
-                                   quoting=csv.QUOTE_ALL, skipinitialspace=True):
-            if line['story'] not in event_dict:
-                event_dict[line['story']] = [line['text']]
-            else:
-                event_dict[line['story']].append(line['text'])
-
-    return event_dict
-
-
-if os.path.exists(variegata.app.config["MODEL_ROOT"]/'variegata.model'):
-    variegata.app.config["MODEL"] = Word2Vec.load(str(variegata.app.config["MODEL_ROOT"]/'variegata.model'))
-else:
-    create_model.create_model()
-    variegata.app.config["MODEL"] = Word2Vec.load(str(variegata.app.config["MODEL_ROOT"] / 'variegata.model'))
-
-variegata.app.config["EVENTS_DICT"] = events_to_dict()
-
-model = variegata.app.config["MODEL"]
-events_dict = events_to_dict()
-
-
 def generate_story(num_nodes):
+    model = variegata.models.get_model()
+    db = variegata.models.get_db().cursor()
     story_events = []
-    cur_node = str(random.choice(list(events_dict.keys()))) + "_0"
-    for i in range(num_nodes):
-        cur_node = random.choice(model.most_similar(cur_node)[:10])[0]
-        split_node = cur_node.split("_")
-        story_events.append(events_dict[split_node[0]][int(split_node[1])])
+
+    db.execute('SELECT * FROM events WHERE event_idx = 0')
+    nodes = db.fetchall()
+
+    first_node = random.choice(nodes)
+    story_events.append(first_node[3])
+    curr_node = first_node[1] + "_0"
+
+    for i in range(num_nodes - 1):
+        curr_node = random.choice(model.most_similar(curr_node)[:5])[0]
+        split_node = curr_node.split("_")
+        db.execute(
+            'SELECT text FROM events WHERE (story_num = ? AND event_idx = ?)',
+            (split_node[0], int(split_node[1]),)
+        )
+        curr_text = db.fetchone()[0]
+        story_events.append(curr_text)
 
     return story_events

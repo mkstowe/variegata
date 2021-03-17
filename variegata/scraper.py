@@ -3,9 +3,11 @@ import os
 import time
 import networkx as nx
 # import matplotlib.pyplot as plt
-
 from selenium import webdriver
 from selenium.webdriver import FirefoxOptions
+# import sqlite3
+import mariadb
+from database import get_db
 
 
 def click_action(links, action_num):
@@ -164,21 +166,18 @@ def save_tree(tree, filename):
 
 
 urls = [
-
     "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=5587",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10638",
-
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11246",
-
+    #
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=54639",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7397",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8041",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11545",
-
+    #
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7393",
-
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=13875",
-
+    #
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=37696",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31013",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45375",
@@ -191,7 +190,7 @@ urls = [
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=5466",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=28030",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56515",
-
+    #
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7480",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11274",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53134",
@@ -229,7 +228,9 @@ urls = [
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=44543",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56753",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=36594",
+
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=15424",
+
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8035",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10524",
     # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=14899",
@@ -267,8 +268,11 @@ urls = [
 
 
 def scrape_stories():
-    with open('static/events.csv', 'w+') as file:
-        file.write("story,event_idx,text")
+    conn = get_db()
+    cursor = conn.cursor()
+
+    if os.path.exists('static/events.csv'):
+        os.remove('static/events.csv')
 
     for u in range(len(urls)):
         scraper = Scraper()
@@ -282,6 +286,20 @@ def scrape_stories():
         with open('static/events.csv', 'a+') as file:
             for idx, event in enumerate(scraper.events):
                 file.write(str(scraper.curr_story) + ',' + str(idx) + ',"' + event.replace('\n', ' ') + '"' + '\n')
+
+                check_event = cursor.execute(
+                    'SELECT * FROM events WHERE (story_num=? AND event_idx=?)',
+                    (scraper.curr_story, idx)
+                )
+
+                if check_event is None:
+                    cursor.execute(
+                        'INSERT INTO events(story_num, event_idx, text) VALUES (?, ?, ?)',
+                        (scraper.curr_story, idx, event.replace('\n', ' '),)
+                    )
+        conn.commit()
+
+    conn.close()
 
     # plt.figure(figsize=(20, 14))
     #

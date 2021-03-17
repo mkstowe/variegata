@@ -6,6 +6,7 @@ URLs include:
 import flask
 import variegata
 from variegata.generator import generate_story
+# from variegata.restart import restart
 
 
 @variegata.app.route('/story/', methods=['GET', 'POST'])
