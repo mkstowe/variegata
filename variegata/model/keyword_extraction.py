@@ -47,7 +47,7 @@ def preprocess(text):
 
 def extract_keywords(text, num_words):
     text = preprocess(text)
-    return keywords(text, words=num_words, deacc=True, lemmatize=True)
+    return keywords(text, words=num_words, deacc=True, lemmatize=True).replace('\n', " ").split(" ")
 
 
 # print(extract_keywords(doc, 15))

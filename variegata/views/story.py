@@ -6,11 +6,10 @@ URLs include:
 import flask
 import variegata
 from variegata.generator import generate_story
-# from variegata.restart import restart
 
 
 @variegata.app.route('/story/', methods=['GET', 'POST'])
 def story():
     """Display /story/ route."""
-    context = {"events": generate_story.generate_story(10)}
+    context = {"events": generate_story.generate_story(20)}
     return flask.render_template("story.html", **context)

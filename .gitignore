@@ -1,5 +1,10 @@
+static/
 graphs/
 stories/
 events.csv
 *.png
 *.model
+secrets.txt
+*.sqlite3
+master.txt
+*.gml
