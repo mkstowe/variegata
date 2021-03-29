@@ -1,4 +1,5 @@
 import os
+
 import networkx as nx
 
 
@@ -32,6 +33,3 @@ def construct_graph():
         print("Removed kw_graph.gml")
 
     nx.write_gml(create_keyword_graph(merge_graphs()), 'model/kw_graph.gml')
-
-
-# merge_graphs()

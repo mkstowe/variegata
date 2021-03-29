@@ -8,3 +8,4 @@ secrets.txt
 *.sqlite3
 master.txt
 *.gml
+*.pk

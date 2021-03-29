@@ -1,8 +1,10 @@
-import flask
-import variegata
-import mariadb
-import sys
 import os
+import pickle
+import sys
+
+import flask
+import mariadb
+import variegata
 from gensim.models import Word2Vec
 
 
@@ -37,6 +39,39 @@ def get_model():
             sys.exit(1)
 
     return flask.g.model
+
+
+def get_vectorizer():
+    if 'vectorizer' not in flask.g:
+        try:
+            flask.g.vectorizer = pickle.load(open(str(variegata.app.config["DATA_ROOT"] / 'vectorizer.pk'), 'rb'))
+        except os.error as e:
+            print(f"Error loading vectorizer: {e}")
+            sys.exit(1)
+
+    return flask.g.vectorizer
+
+
+def get_transformed_vectorizer():
+    if 'trans_vec' not in flask.g:
+        try:
+            flask.g.trans_vec = pickle.load(open(str(variegata.app.config["DATA_ROOT"] / 'transformed_vec.pk'), 'rb'))
+        except os.error as e:
+            print(f"Error loading vectorizer: {e}")
+            sys.exit(1)
+
+    return flask.g.trans_vec
+
+
+def get_dataframe():
+    if 'df' not in flask.g:
+        try:
+            flask.g.df = pickle.load(open(str(variegata.app.config["DATA_ROOT"] / 'dataframe.pk'), 'rb'))
+        except os.error as e:
+            print(f"Error loading vectorizer: {e}")
+            sys.exit(1)
+
+    return flask.g.df
 
 
 @variegata.app.teardown_appcontext

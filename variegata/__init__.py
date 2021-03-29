@@ -9,5 +9,5 @@ app = flask.Flask(__name__)  # pylint: disable=invalid-name
 app.config.from_object('variegata.config')
 app.config.from_envvar('VARIEGATA_SETTINGS', silent=True)
 
-import variegata.models  # noqa: E402  pylint: disable=wrong-import-position
+import variegata.flask_models  # noqa: E402  pylint: disable=wrong-import-position
 import variegata.views  # noqa: E402  pylint: disable=wrong-import-position

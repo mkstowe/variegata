@@ -1,6 +1,7 @@
+import os
+
 import networkx as nx
 from node2vec import Node2Vec
-import os
 
 
 def create_model():

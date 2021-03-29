@@ -1,13 +1,8 @@
-import sys
 import re
-import json
 import string
-import pathlib
-from gensim.summarization import keywords
-from gensim.parsing.preprocessing import STOPWORDS
 
-# with open((pathlib.Path(__file__).resolve().parent.parent/'data'/'static'/'stories'/sys.argv[1]).with_suffix('.json')) as f:
-#     doc = str(json.load(f))
+from gensim.parsing.preprocessing import STOPWORDS
+from gensim.summarization import keywords
 
 
 def decontracted(phrase):
@@ -48,6 +43,3 @@ def preprocess(text):
 def extract_keywords(text, num_words):
     text = preprocess(text)
     return keywords(text, words=num_words, deacc=True, lemmatize=True).replace('\n', " ").split(" ")
-
-
-# print(extract_keywords(doc, 15))

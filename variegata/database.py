@@ -1,5 +1,6 @@
-import mariadb
 import sys
+
+import mariadb
 
 
 def get_db():

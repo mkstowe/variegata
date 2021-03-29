@@ -1,13 +1,13 @@
+import csv
 import json
 import os
 import time
+
 import networkx as nx
-# import matplotlib.pyplot as plt
+# from database import get_db
+from model.keyword_extraction import extract_keywords
 from selenium import webdriver
 from selenium.webdriver import FirefoxOptions
-import mariadb
-from database import get_db
-from model.keyword_extraction import extract_keywords
 
 
 def click_action(links, action_num):
@@ -139,7 +139,8 @@ class Scraper:
         if result == parent_story or result in self.texts:
             self.go_back()
             self.event_num = self.events.index(result)
-            self.G.add_edge(str(self.curr_story) + "_" + str(prev_event), str(self.curr_story) + "_" + str(self.event_num))
+            self.G.add_edge(str(self.curr_story) + "_" + str(prev_event),
+                            str(self.curr_story) + "_" + str(self.event_num))
             return None
 
         self.events.append(result)
@@ -165,26 +166,30 @@ class Scraper:
         return action_result
 
     def insert_node(self, text):
-        try:
-            cursor = self.conn.cursor()
-            check_event = cursor.execute(
-                'SELECT * FROM events WHERE (story_num=? AND text=?)',
-                (self.curr_story, text)
-            )
+        with open('data/events.csv', 'a+') as f:
+            writer = csv.writer(f)
+            writer.writerow([str(self.curr_story), text.replace('\n', ' ')])
 
-            if check_event is None:
-                self.event_num = len(self.events) - 1
-                self.G.add_node(str(self.curr_story) + "_" + str(self.event_num), keywords=extract_keywords(text, 5),
-                                text=text)
-
-                cursor.execute(
-                    'INSERT INTO events(story_num, event_idx, text) VALUES (?, ?, ?)',
-                    (self.curr_story, self.event_num, text.replace('\n', ' '),)
-                )
-            cursor.close()
-        except:
-            print("Ignored event")
-            pass
+        # try:
+        #     cursor = self.conn.cursor()
+        #     check_event = cursor.execute(
+        #         'SELECT * FROM events WHERE (story_num=? AND text=?)',
+        #         (self.curr_story, text)
+        #     )
+        #
+        #     if check_event is None:
+        #         self.event_num = len(self.events) - 1
+        #         self.G.add_node(str(self.curr_story) + "_" + str(self.event_num), keywords=extract_keywords(text, 5),
+        #                         text=text)
+        #
+        #         cursor.execute(
+        #             'INSERT INTO events(story_num, event_idx, text) VALUES (?, ?, ?)',
+        #             (self.curr_story, self.event_num, text.replace('\n', ' '),)
+        #         )
+        #     cursor.close()
+        # except:
+        #     print("Ignored event")
+        #     pass
 
 
 def save_tree(tree, filename):
@@ -194,113 +199,104 @@ def save_tree(tree, filename):
 
 urls = [
     "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=5587",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10638",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11246",
-
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=54639",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7397",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8041",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11545",
-
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7393",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=13875",
-
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=37696",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31013",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45375",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=41698",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10634",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=42204",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=6823",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=18988",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10359",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=5466",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=28030",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56515",
-
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7480",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11274",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53134",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=17306",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=470",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8041",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=23928",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10183",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45866",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60232",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=6376",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=36791",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60128",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=52961",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=54011",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=34838",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=13349",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8038",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56742",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=48393",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53356",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10872",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7393",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31013",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43910",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53837",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8098",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=55043",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=28838",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11906",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8040",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=2280",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31014",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43744",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=44543",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56753",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=36594",
-
-    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=15424",
-
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8035",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10524",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=14899",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=9361",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=28030",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=49642",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43573",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=38025",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7480",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7567",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60747",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10359",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31353",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=13875",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56501",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=38542",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=42204",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43993",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=1153",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=57114",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=52887",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=16489",
-
-    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53186",
-
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=34849",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=26752",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7094",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8557",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45225",
-
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10638",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11246",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=54639",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7397",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8041",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11545",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7393",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=13875",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=37696",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31013",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45375",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=41698",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10634",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=42204",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=6823",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=18988",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10359",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=5466",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=28030",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56515",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7480",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11274",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53134",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=17306",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=470",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8041",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=23928",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10183",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45866",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60232",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=6376",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=36791",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60128",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=52961",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=54011",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=34838",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=13349",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8038",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56742",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=48393",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53356",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10872",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7393",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31013",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43910",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=53837",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8098",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=55043",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=28838",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=11906",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8040",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=2280",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31014",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43744",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=44543",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56753",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=36594",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8035",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10524",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=14899",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=9361",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=28030",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=49642",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43573",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=38025",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7480",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7567",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60747",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=10359",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=31353",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=13875",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=56501",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=38542",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=42204",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=43993",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=1153",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=57114",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=52887",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=16489",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=34849",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=26752",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=7094",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=8557",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45225",
+    #
     "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=4720",
-
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=51926",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45375",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=27234",
-    "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60772",
+    #
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=51926",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=45375",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=27234",
+    # "http://chooseyourstory.com/story/viewer/default.aspx?StoryId=60772",
 ]
 
 
 def scrape_stories():
-    if os.path.exists('static/events.csv'):
-        os.remove('static/events.csv')
+    with open('data/events.csv', 'w+') as f:
+        writer = csv.writer(f)
+        writer.writerow(['story_num', 'text'])
 
     for u in range(len(urls)):
         scraper = Scraper()
@@ -314,14 +310,4 @@ def scrape_stories():
         scraper.conn.commit()
         scraper.conn.close()
 
-
-    # plt.figure(figsize=(20, 14))
-    #
-    # nx.draw(scraper.G, node_size=1200, node_color='lightblue', linewidths=0.4, font_size=15, with_labels=True,
-    #         font_weight='bold')
-    # plt.savefig("story_graph.png")
-
     print("Done")
-
-
-# scrape_stories()

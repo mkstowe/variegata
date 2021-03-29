@@ -1,13 +1,13 @@
-from scraper import scrape_stories
-from create_graphs import construct_graph
-from model.create_model import create_model
-from database import get_db
-import mariadb
 import os
+
+from create_graphs import construct_graph
+# from database import get_db
+from model.create_model import create_model
+from scraper import scrape_stories
 
 
 def restart():
-    clear_db()
+    # clear_db()
     clear_dirs()
 
     print("SCRAPING STORIES")
@@ -18,22 +18,22 @@ def restart():
     create_model()
 
 
-def clear_db():
-    print("RESETTING DATABASE")
-    conn = get_db()
-
-    cursor = conn.cursor()
-    cursor.execute("DROP TABLE IF EXISTS events;")
-    cursor.execute("""
-            CREATE TABLE events(
-                id INTEGER AUTO_INCREMENT PRIMARY KEY,
-                event_idx INTEGER,
-                story_num VARCHAR(16) NOT NULL,
-                text TEXT
-            );
-        """)
-    conn.commit()
-    conn.close()
+# def clear_db():
+#     print("RESETTING DATABASE")
+#     conn = get_db()
+#
+#     cursor = conn.cursor()
+#     cursor.execute("DROP TABLE IF EXISTS events;")
+#     cursor.execute("""
+#             CREATE TABLE events(
+#                 id INTEGER AUTO_INCREMENT PRIMARY KEY,
+#                 event_idx INTEGER,
+#                 story_num VARCHAR(16) NOT NULL,
+#                 text TEXT
+#             );
+#         """)
+#     conn.commit()
+#     conn.close()
 
 
 def clear_dirs():
