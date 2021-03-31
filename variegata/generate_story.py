@@ -2,13 +2,25 @@ import pickle
 import random
 
 from gensim.models import Word2Vec
+# import gensim
 from model import keyword_extraction
 from sklearn.metrics.pairwise import cosine_similarity
+import sklearn
+import sklearn.feature_extraction
+# from pathlib import Path
+import os
+import sys
 
-model = Word2Vec.load('model/variegata.model')
-vectorizer = pickle.load(open('data/vectorizer.pk', 'rb'))
-X = pickle.load(open('data/transformed_vec.pk', 'rb'))
-df = pickle.load(open('data/dataframe.pk', 'rb'))
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 
 def generate_story(num_nodes):
@@ -36,5 +48,11 @@ def generate_story(num_nodes):
     return story_events
 
 
-for event in generate_story(5):
-    print(event, '\n')
+if __name__ == "__main__":
+    model = Word2Vec.load(resource_path('model/variegata.model'))
+    vectorizer = pickle.load(open(resource_path('data/vectorizer.pk'), 'rb'))
+    X = pickle.load(open(resource_path('data/transformed_vec.pk'), 'rb'))
+    df = pickle.load(open(resource_path('data/dataframe.pk'), 'rb'))
+
+    for event in generate_story(10):
+        print(event, '\n')

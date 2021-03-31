@@ -4,18 +4,21 @@ from create_graphs import construct_graph
 # from database import get_db
 from model.create_model import create_model
 from scraper import scrape_stories
+from data.tf_idf import tf_idf
 
 
 def restart():
     # clear_db()
-    clear_dirs()
+    # clear_dirs()
 
-    print("SCRAPING STORIES")
-    scrape_stories()
+    # print("SCRAPING STORIES")
+    # scrape_stories()
     print("CONSTRUCTING KEYWORD GRAPH")
     construct_graph()
     print("CREATING MODEL")
     create_model()
+    print("CREATING TF-IDF")
+    tf_idf()
 
 
 # def clear_db():
