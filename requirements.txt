@@ -16,7 +16,8 @@ en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_
 Flask==1.1.2
 Flask-SQLAlchemy==2.4.4
 funcsigs==1.0.2
-gensim==4.0.0
+gensim==3.8.3
+greenlet==1.0.0
 html5validator==0.3.3
 idna==2.10
 iniconfig==1.1.1
@@ -52,7 +53,7 @@ pycodestyle==2.7.0
 pydantic==1.7.3
 pydocstyle==5.1.1
 pydot==1.4.2
-pyinstaller==4.2
+pyinstaller @ https://github.com/pyinstaller/pyinstaller/archive/develop.zip
 pyinstaller-hooks-contrib==2021.1
 pylint==2.7.2
 PyMeta3==0.5.1
@@ -81,8 +82,9 @@ toml==0.10.2
 tornado==6.1
 tqdm==4.58.0
 typer==0.3.2
+typing-extensions==3.7.4.3
 urllib3==1.26.3
--e git+git@github.com:mkstowe/variegata.git@a4353a639d9c1401f51b1601a8f7e30f41d6e5dd#egg=variegata&subdirectory=variegata
+-e git+git@github.com:mkstowe/variegata.git@2dfe0f36c86e8ae99019ac8f6b0af08eba0be81a#egg=variegata&subdirectory=variegata
 wasabi==0.8.2
 Werkzeug==1.0.1
 wrapt==1.12.1
